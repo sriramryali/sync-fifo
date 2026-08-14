@@ -2,7 +2,6 @@
 
 A parameterizable synchronous First-In-First-Out (FIFO) memory buffer implemented in Verilog HDL. This module provides data buffering and rate-matching between modules operating on the same clock.
 
----
 
 ## Design Features
 
@@ -13,7 +12,6 @@ A parameterizable synchronous First-In-First-Out (FIFO) memory buffer implemente
 * **Standard Interface:** 1-cycle registered output delay to avoid long combinational paths.
 * **Overflow & Underflow Guard:** Writes are blocked when full (`wr_en && !full`), and reads are blocked when empty (`rd_en && !empty`).
 
----
 
 ## Signal Description
 
@@ -28,7 +26,6 @@ A parameterizable synchronous First-In-First-Out (FIFO) memory buffer implemente
 | `full` | Output | `1` | Asserted when FIFO is full |
 | `empty` | Output | `1` | Asserted when FIFO is empty |
 
----
 
 ## Parameters
 
@@ -37,7 +34,6 @@ A parameterizable synchronous First-In-First-Out (FIFO) memory buffer implemente
 | `DATA_WIDTH` | `8` | Bit width of each data word |
 | `FIFO_DEPTH` | `8` | Total capacity in words (must be a power of 2) |
 
----
 
 ## Implementation Notes
 
@@ -51,6 +47,3 @@ A parameterizable synchronous First-In-First-Out (FIFO) memory buffer implemente
 3. **Simultaneous Read & Write:**
    * When `wr_en` and `rd_en` are both high at the same time (and FIFO is neither full nor empty), data is written and read concurrently without altering overall usage.
 
-
-# View waveform
-gtkwave dump.vcd
