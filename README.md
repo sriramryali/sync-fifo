@@ -1,5 +1,7 @@
 # Synchronous FIFO Buffer Design
 
+## Module Description
+
 A parameterizable synchronous First-In-First-Out (FIFO) memory buffer implemented in Verilog HDL. This module provides data buffering and rate-matching between modules operating on the same clock.
 
 
@@ -35,7 +37,7 @@ A parameterizable synchronous First-In-First-Out (FIFO) memory buffer implemente
 | `FIFO_DEPTH` | `8` | Total capacity in words (must be a power of 2) |
 
 
-## Implementation Notes
+## Key Notes
 
 1. **Standard vs. FWFT Mode:**
    * This is a **standard FIFO**, meaning data appears on `data_out` one cycle after `rd_en` is asserted.
