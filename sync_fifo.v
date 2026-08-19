@@ -22,8 +22,8 @@
 module sync_fifo #(parameter DATA_WIDTH = 8,
     FIFO_DEPTH = 8) (
     input clk,
-    input wr_en,
-    input rd_en,
+    input w_en,
+    input r_en,
     input rst_n,
     input [DATA_WIDTH-1 : 0] data_in,
     output reg [DATA_WIDTH-1 : 0] data_out,
@@ -37,34 +37,34 @@ module sync_fifo #(parameter DATA_WIDTH = 8,
     reg [DATA_WIDTH-1 : 0] fifo_mem [0 : FIFO_DEPTH-1];
 
     // read and write pointers, note that these two have an extra bit(MSB), which is used for differentiating full and empty conditions
-    reg [PTR_WIDTH : 0] wr_ptr;
-    reg [PTR_WIDTH : 0] rd_ptr;
+    reg [PTR_WIDTH : 0] w_ptr;
+    reg [PTR_WIDTH : 0] r_ptr;
 
     // checking full and empty conditions(the MSB detects if the pointer has wrapped around)
-    assign full = (wr_ptr[PTR_WIDTH] != rd_ptr[PTR_WIDTH]) &&
-                    (wr_ptr[PTR_WIDTH-1 : 0] == rd_ptr[PTR_WIDTH-1 :0]);
-    assign empty = (wr_ptr == rd_ptr);
+    assign full = (w_ptr[PTR_WIDTH] != r_ptr[PTR_WIDTH]) &&
+                    (w_ptr[PTR_WIDTH-1 : 0] == r_ptr[PTR_WIDTH-1 :0]);
+    assign empty = (w_ptr == r_ptr);
 
     // write module(that which writes data into the fifo)
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            wr_ptr <= 0;
+            w_ptr <= 0;
         end
-        else if(wr_en && !full) begin
-            fifo_mem[wr_ptr[PTR_WIDTH-1 : 0]] <= data_in;
-            wr_ptr <= wr_ptr + 1'b1;
+        else if(w_en && !full) begin
+            fifo_mem[w_ptr[PTR_WIDTH-1 : 0]] <= data_in;
+            w_ptr <= w_ptr + 1'b1;
         end
     end
 
     // read module(that which reads data from the fifo)
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            rd_ptr <= 0;
+            r_ptr <= 0;
             data_out <= 0;
         end
-        else if(rd_en && !empty) begin
-            data_out <= fifo_mem[rd_ptr[PTR_WIDTH-1 : 0]];   // this introduces a single cycle delay(as it is registered), if you don't want that, you can use a FWFT FIFO : just assign data_out combinationally -> assign data_out  = fifo_mem[rd_ptr[PTR_WIDTH-1 : 0]]; the notion of rd_en changes, now it is the consumer saying the data was read, and the next one can be shown
-            rd_ptr <= rd_ptr + 1'b1;
+        else if(r_en && !empty) begin
+            data_out <= fifo_mem[r_ptr[PTR_WIDTH-1 : 0]];   // this introduces a single cycle delay(as it is registered), if you don't want that, you can use a FWFT FIFO : just assign data_out combinationally -> assign data_out  = fifo_mem[rd_ptr[PTR_WIDTH-1 : 0]]; the notion of rd_en changes, now it is the consumer saying the data was read, and the next one can be shown
+            r_ptr <= r_ptr + 1'b1;
         end
     end
 
